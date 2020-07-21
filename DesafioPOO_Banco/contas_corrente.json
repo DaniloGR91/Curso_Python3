@@ -1,0 +1,20 @@
+{
+    "7019": {
+        "nome": "Rafael",
+        "datanasc": "18/02/2020",
+        "renda_mensal": 550,
+        "saldo": "200",
+        "credito": 0,
+        "limite": 55.0,
+        "agencia": 1112
+    },
+    "92577": {
+        "nome": "Camila",
+        "datanasc": "05/02/1987",
+        "renda_mensal": 2000,
+        "saldo": 250,
+        "credito": 0,
+        "limite": 200.0,
+        "agencia": 1112
+    }
+}
