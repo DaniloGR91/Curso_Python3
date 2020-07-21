@@ -137,9 +137,18 @@ def menu_cliente(cc=True, cp=False):
         if menu.opcao == 1:
             conta_cliente.ver_saldo()
         elif menu.opcao == 2:
-            pass
+            cliente_dados = conta_cliente.cliente_dados()
+            print(cliente_dados)
         elif menu.opcao == 3:
             conta_cliente.sacar()
+            if cc:
+                cliente_dados = conta_cliente.retorna_cliente_dados()
+                banco.atualizar_contas(cliente_dados, 'corrente')
+
+            if cp:
+                cliente_dados = conta_cliente.retorna_cliente_dados()
+                banco.atualizar_contas(cliente_dados, 'poupanca')
+
         elif menu.opcao == 4:
             pass
         elif menu.opcao == 5:

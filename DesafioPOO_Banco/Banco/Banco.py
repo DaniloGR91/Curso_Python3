@@ -1,12 +1,11 @@
 from Banco.Conta import ContaCorrente, ContaPoupanca
 import json
 from random import randint
-from modulo_data import *
+from modulo_data import validar_datanasc
 
 
 class Banco:
     def __init__(self, agencias, agencia_atual):
-        from Banco.Menu import Menu
         self.agencias = agencias
         self.__agencia_atual = agencia_atual
         print('-'*50)
@@ -87,24 +86,23 @@ class Banco:
                     arquivo = arq.read()
                     arquivo = json.loads(arquivo)
 
-                arquivo.update(dados_cliente)
+                for k in dados_cliente:
+                    conta = str(k)
 
-                with open('contas_corrente.json', 'w') as arq:
-                    arq.write(json.dumps(arquivo))
-
-            except FileNotFoundError:
-                print('Banco de dados de contas correntes não encontrado.')
-                arq = open('contas_corrente.json', 'w')
-                arq.close()
-                print('Um novo banco de dados foi criado.')
-
-                arquivo = dados_cliente
+                if conta in arquivo:
+                    print('encontrado')
+                    dados_cliente[conta] = dados_cliente.pop(int(conta))
+                    arquivo[conta] = dados_cliente[conta]
+                    print(arquivo)
+                else:
+                    print('Não encontrado')
+                    arquivo.update(dados_cliente)
 
                 with open('contas_corrente.json', 'w') as arq:
                     arq.write(json.dumps(arquivo))
 
             except json.decoder.JSONDecodeError:
-                print('erro')
+                print('Json Decode Error')
 
                 arquivo = dados_cliente
 
@@ -116,17 +114,32 @@ class Banco:
 
         if tipo_conta == 'poupanca':
             try:
-                with open('contas_poupanca.json', 'r+') as arq:
+                with open('contas_poupanca.json', 'r') as arq:
                     arquivo = arq.read()
                     arquivo = json.loads(arquivo)
-            except FileNotFoundError:
-                print('Banco de dados de contas poupanças não encontrado.')
-                arq = open('contas_corrente.json', 'w')
-                arq.close()
-                arquivo = {}
-                print('Um novo banco de dados foi criado.')
 
-            arquivo.update(dados_cliente)
+                for k in dados_cliente:
+                    conta = str(k)
+
+                if conta in arquivo:
+                    print('encontrado')
+                    dados_cliente[conta] = dados_cliente.pop(int(conta))
+                    arquivo[conta] = dados_cliente[conta]
+                    print(arquivo)
+                else:
+                    print('Não encontrado')
+                    arquivo.update(dados_cliente)
+
+                with open('contas_poupanca.json', 'w') as arq:
+                    arq.write(json.dumps(arquivo))
+
+            except json.decoder.JSONDecodeError:
+                print('Json Decode Error')
+
+                arquivo = dados_cliente
+
+                with open('contas_poupanca.json', 'w') as arq:
+                    arq.write(json.dumps(arquivo))
 
             with open('contas_poupanca.json', 'w') as arq:
                 arq.write(json.dumps(arquivo))
@@ -160,8 +173,10 @@ class Banco:
         if self.credito_preaprovado(renda_mensal)[0]:
             print(
                 f'O cliente tem um crédito pré-aprovado de R$ {self.credito_preaprovado(renda_mensal)[1]}')
+
             resposta_credito = input(
                 'Gostaria de adquirir a função crédito? [S - SIM; N - NÃO] ').upper()
+
             if resposta_credito == 'S' or resposta_credito == 'SIM':
                 credito = self.credito_preaprovado(renda_mensal)[1]
             else:
@@ -190,11 +205,45 @@ class Banco:
                         str(randint(0, 9)) + str(randint(0, 9)) +
                         str(randint(0, 9)))
 
-            with open('contas.json', 'r') as arq:
-                arquivo = arq.read()
-                arquivo = json.loads(arquivo)
+            try:
+                with open('contas_corrente.json', 'r') as arq:
+                    arquivo_cc = arq.read()
+                    arquivo_cc = json.loads(arquivo_cc)
+            except FileNotFoundError:
+                print('Banco de dados de conta corrente não encontrado.')
+                arq = open('contas_corrente.json', 'w')
+                arq.close()
+                print('Um novo banco de dados foi criado.')
+                try:
+                    with open('contas_corrente.json', 'r') as arq:
+                        arquivo_cc = arq.read()
+                        arquivo_cc = json.loads(arquivo_cc)
+                except json.decoder.JSONDecodeError:
+                    print('Json Decode Eror line 202')
 
-            if conta not in arquivo:
+            except json.decoder.JSONDecodeError:
+                print('Json Decode Eror line 205')
+
+            try:
+                with open('contas_poupanca.json', 'r') as arq:
+                    arquivo_pp = arq.read()
+                    arquivo_pp = json.loads(arquivo_pp)
+            except FileNotFoundError:
+                print('Banco de dados de conta poupança não encontrado.')
+                arq = open('contas_poupanca.json', 'w')
+                arq.close()
+                print('Um novo banco de dados foi criado.')
+                try:
+                    with open('contas_corrente.json', 'r') as arq:
+                        arquivo_pp = arq.read()
+                        arquivo_pp = json.loads(arquivo_pp)
+                except json.decoder.JSONDecodeError:
+                    print('Json Decode Eror line 221')
+
+            except json.decoder.JSONDecodeError:
+                print('Json Decode Eror line 223')
+
+            if str(conta) not in arquivo_cc and str(conta) not in arquivo_pp:
                 break
             else:
                 continue
@@ -242,64 +291,56 @@ class Banco:
                     continue
 
         if tipo_de_conta == 1:
-            cliente = ContaCorrente(nome, data_nasc, renda_mensal,
-                                    tipo_de_conta, conta, agencia, saldo, credito, limite)
+            cliente = ContaCorrente(nome,
+                                    data_nasc,
+                                    renda_mensal,
+                                    tipo_de_conta,
+                                    conta,
+                                    agencia,
+                                    saldo,
+                                    credito,
+                                    limite)
 
-            cliente_dados = {cliente.conta: {
-                'nome': cliente.nome,
-                'datanasc': cliente.datanasc,
-                'renda_mensal': cliente.renda_mensal,
-                'saldo': cliente.saldo,
-                'credito': cliente.credito,
-                'limite': cliente.limite,
-                'agencia': cliente.agencia
-            }
-            }
+            cliente_dados = cliente.retorna_cliente_dados()
 
             self.atualizar_contas(cliente_dados, 'corrente')
 
         if tipo_de_conta == 2:
-            cliente = ContaPoupanca(
-                nome, data_nasc, renda_mensal, tipo_de_conta, conta, agencia, saldo, credito)
-            cliente_dados = {cliente.conta: {
-                'nome': cliente.nome,
-                'datanasc': cliente.datanasc,
-                'renda_mensal': cliente.renda_mensal,
-                'saldo': cliente.saldo,
-                'credito': cliente.credito,
-                'agencia': cliente.agencia
-            }}
-
-            cliente_dados = {}
+            cliente = ContaPoupanca(nome,
+                                    data_nasc,
+                                    renda_mensal,
+                                    tipo_de_conta,
+                                    conta,
+                                    agencia,
+                                    saldo,
+                                    credito)
+            cliente_dados = cliente.retorna_cliente_dados()
 
             self.atualizar_contas(cliente_dados, 'poupanca')
+
         if tipo_de_conta == 3:
 
-            cliente = ContaCorrente(nome, data_nasc, renda_mensal,
-                                    tipo_de_conta, conta, agencia, saldo, credito, limite)
-            cliente_dados = {
-                cliente.conta: {
-                    'nome': cliente.nome,
-                    'datanasc': cliente.datanasc,
-                    'renda_mensal': cliente.renda_mensal,
-                    'saldo': cliente.saldo,
-                    'credito': cliente.credito,
-                    'limite': cliente.limite,
-                    'agencia': cliente.agencia
-                }
-            }
+            cliente = ContaCorrente(nome,
+                                    data_nasc,
+                                    renda_mensal,
+                                    tipo_de_conta,
+                                    conta, agencia,
+                                    saldo_corrente,
+                                    credito,
+                                    limite)
+            cliente_dados = cliente.retorna_cliente_dados()
+
             self.atualizar_contas(cliente_dados, 'corrente')
 
-            cliente2 = ContaPoupanca(
-                nome, data_nasc, renda_mensal, tipo_de_conta, conta, agencia, saldo, credito)
-            cliente_dados2 = {
-                cliente2.conta: {
-                    'nome': cliente2.nome,
-                    'datanasc': cliente2.datanasc,
-                    'renda_mensal': cliente2.renda_mensal,
-                    'saldo': cliente2.saldo,
-                    'credito': cliente2.credito,
-                    'agencia': cliente2.agencia
-                }
-            }
+            cliente2 = ContaPoupanca(nome,
+                                     data_nasc,
+                                     renda_mensal,
+                                     tipo_de_conta,
+                                     conta,
+                                     agencia,
+                                     saldo_poupanca,
+                                     credito)
+
+            cliente_dados2 = cliente.retorna_cliente_dados()
+
             self.atualizar_contas(cliente_dados2, 'poupanca')
