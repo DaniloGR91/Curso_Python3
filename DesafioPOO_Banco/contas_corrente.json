@@ -3,7 +3,7 @@
         "nome": "Danilo",
         "datanasc": "17/08/1991",
         "renda_mensal": 2200,
-        "saldo": 250,
+        "saldo": 100,
         "credito": 550.0,
         "limite": 220.0,
         "agencia": 1111

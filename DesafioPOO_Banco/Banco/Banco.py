@@ -341,6 +341,6 @@ class Banco:
                                      saldo_poupanca,
                                      credito)
 
-            cliente_dados2 = cliente.retorna_cliente_dados()
+            cliente_dados2 = cliente2.retorna_cliente_dados()
 
             self.atualizar_contas(cliente_dados2, 'poupanca')

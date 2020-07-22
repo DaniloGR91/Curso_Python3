@@ -31,8 +31,20 @@ class Conta(ABC, Cliente):
     def sacar(self):
         pass
 
-    def depositar(self, valor):
-        pass
+    def depositar(self):
+        while True:
+            valor = input('Quanto você deseja depositar? ').strip()
+            valor = valor.replace('R$', '')
+            valor = valor.replace(',', '.')
+            try:
+                valor = int(valor)
+                break
+            except ValueError:
+                print('Digite um valor válido.')
+                continue
+
+        self.saldo += valor
+        print(f'Seu novo saldo é de {self.saldo}')
 
     def ver_saldo(self):
         print(f'O seu saldo é {self.saldo}')
@@ -55,7 +67,6 @@ class ContaCorrente(Conta):
         self.limite = limite
 
     def sacar(self):
-        print('método sacar conta corrente')
         while True:
             valor = input('Quanto você deseja sacar? ').strip()
             valor = valor.replace('R$', '')
@@ -67,9 +78,10 @@ class ContaCorrente(Conta):
                 print('Digite um valor válido.')
                 continue
 
-        if valor > self.saldo:
+        if valor > self.saldo + self.limite:
             print('Saldo insuficiente.')
         else:
+            self.saldo -= valor
             print(f'Seu novo saldo é de {self.saldo}')
 
     def retorna_cliente_dados(self):
@@ -101,7 +113,6 @@ class ContaPoupanca(Conta):
                          tipo_conta, conta, agencia, saldo, credito)
 
     def sacar(self):
-        print('método sacar poupanca')
         while True:
             valor = input('Quanto você deseja sacar? ').strip()
             valor = valor.replace('R$', '')
@@ -113,7 +124,6 @@ class ContaPoupanca(Conta):
                 print('Digite um valor válido.')
                 continue
 
-        # Ajeitr self.saldo pra ficar inteiro
         if valor > self.saldo:
             print('Saldo insuficiente.')
         else:

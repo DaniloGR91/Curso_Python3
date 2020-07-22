@@ -137,16 +137,22 @@ def menu_cliente(cc=True, cp=False):
         if menu.opcao == 1:
             conta_cliente.ver_saldo()
         elif menu.opcao == 2:
-            cliente_dados = conta_cliente.cliente_dados()
-            print(cliente_dados)
-        elif menu.opcao == 3:
-            conta_cliente.sacar()
+            conta_cliente.depositar()
+            cliente_dados = conta_cliente.retorna_cliente_dados()
+
             if cc:
-                cliente_dados = conta_cliente.retorna_cliente_dados()
                 banco.atualizar_contas(cliente_dados, 'corrente')
 
             if cp:
-                cliente_dados = conta_cliente.retorna_cliente_dados()
+                banco.atualizar_contas(cliente_dados, 'poupanca')
+
+        elif menu.opcao == 3:
+            conta_cliente.sacar()
+            cliente_dados = conta_cliente.retorna_cliente_dados()
+            if cc:
+                banco.atualizar_contas(cliente_dados, 'corrente')
+
+            if cp:
                 banco.atualizar_contas(cliente_dados, 'poupanca')
 
         elif menu.opcao == 4:
