@@ -126,16 +126,16 @@ def menu():
                                                   credito=cliente['credito'])
                     menu_cliente(cc=False, cp=True)
             else:
-                print('ERRO')
+                print('Conta não encontrada')
 
 
 def menu_cliente(cc=True, cp=False):
     while True:
-        print(conta_cliente.nome, conta_cliente.idade, conta_cliente.saldo)
         menu = MenuCliente(cc, cp)
-        print(f'opcao foi {menu.opcao}')
+
         if menu.opcao == 1:
             conta_cliente.ver_saldo()
+
         elif menu.opcao == 2:
             conta_cliente.depositar()
             cliente_dados = conta_cliente.retorna_cliente_dados()
@@ -156,8 +156,6 @@ def menu_cliente(cc=True, cp=False):
                 banco.atualizar_contas(cliente_dados, 'poupanca')
 
         elif menu.opcao == 4:
-            pass
-        elif menu.opcao == 5:
             print('Obrigado e volte sempre.')
             sys.exit()
 

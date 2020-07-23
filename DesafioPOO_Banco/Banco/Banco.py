@@ -15,9 +15,6 @@ class Banco:
     def agencia_atual(self):
         return self.__agencia_atual
 
-    def atualizar_idade(self):
-        pass
-
     def cadastrar_agencia(self, agencia_nome, agencia_numero):
         self.agencias[agencia_nome] = agencia_numero
         with open('agencias.json', mode='w') as arquivo:
@@ -25,7 +22,21 @@ class Banco:
 
         print('Agência criada com sucesso.')
 
-    def validar_cliente(self, conta_cliente, agencia_cliente):
+    @staticmethod
+    def validar_agencia(agencia):
+        with open('agencias.json', 'r') as arq:
+            arquivo_agencias = arq.read()
+            arquivo_agencias = json.loads(arquivo_agencias)
+
+        if agencia in arquivo_agencias.values():
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def validar_cliente(conta_cliente, agencia_cliente):
+        conta_cliente = str(conta_cliente)
+
         with open('contas_corrente.json', 'r') as arq:
             arquivo_cc = arq.read()
             arquivo_cc = json.loads(arquivo_cc)
@@ -90,19 +101,16 @@ class Banco:
                     conta = str(k)
 
                 if conta in arquivo:
-                    print('encontrado')
                     dados_cliente[conta] = dados_cliente.pop(int(conta))
                     arquivo[conta] = dados_cliente[conta]
-                    print(arquivo)
                 else:
-                    print('Não encontrado')
                     arquivo.update(dados_cliente)
 
                 with open('contas_corrente.json', 'w') as arq:
                     arq.write(json.dumps(arquivo))
 
             except json.decoder.JSONDecodeError:
-                print('Json Decode Error')
+                pass
 
                 arquivo = dados_cliente
 
@@ -125,17 +133,13 @@ class Banco:
                     print('encontrado')
                     dados_cliente[conta] = dados_cliente.pop(int(conta))
                     arquivo[conta] = dados_cliente[conta]
-                    print(arquivo)
                 else:
-                    print('Não encontrado')
                     arquivo.update(dados_cliente)
 
                 with open('contas_poupanca.json', 'w') as arq:
                     arq.write(json.dumps(arquivo))
 
             except json.decoder.JSONDecodeError:
-                print('Json Decode Error')
-
                 arquivo = dados_cliente
 
                 with open('contas_poupanca.json', 'w') as arq:
@@ -219,10 +223,10 @@ class Banco:
                         arquivo_cc = arq.read()
                         arquivo_cc = json.loads(arquivo_cc)
                 except json.decoder.JSONDecodeError:
-                    print('Json Decode Eror line 202')
+                    pass
 
             except json.decoder.JSONDecodeError:
-                print('Json Decode Eror line 205')
+                pass
 
             try:
                 with open('contas_poupanca.json', 'r') as arq:
@@ -238,10 +242,10 @@ class Banco:
                         arquivo_pp = arq.read()
                         arquivo_pp = json.loads(arquivo_pp)
                 except json.decoder.JSONDecodeError:
-                    print('Json Decode Eror line 221')
+                    pass
 
             except json.decoder.JSONDecodeError:
-                print('Json Decode Eror line 223')
+                pass
 
             if str(conta) not in arquivo_cc and str(conta) not in arquivo_pp:
                 break

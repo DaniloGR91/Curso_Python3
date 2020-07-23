@@ -66,17 +66,18 @@ class ContaCorrente(Conta):
                          tipo_conta, conta, agencia, saldo, credito)
         self.limite = limite
 
-    def sacar(self):
-        while True:
-            valor = input('Quanto você deseja sacar? ').strip()
-            valor = valor.replace('R$', '')
-            valor = valor.replace(',', '.')
-            try:
-                valor = int(valor)
-                break
-            except ValueError:
-                print('Digite um valor válido.')
-                continue
+    def sacar(self, valor=None):
+        if valor is None:
+            while True:
+                valor = input('Quanto você deseja sacar? ').strip()
+                valor = valor.replace('R$', '')
+                valor = valor.replace(',', '.')
+                try:
+                    valor = int(valor)
+                    break
+                except ValueError:
+                    print('Digite um valor válido.')
+                    continue
 
         if valor > self.saldo + self.limite:
             print('Saldo insuficiente.')

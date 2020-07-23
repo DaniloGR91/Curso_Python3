@@ -29,14 +29,14 @@ class Menu(Banco):
         print('-'*50)
         self.opcao = input('Digite a opção desejada: ')
 
-    def validar_opcao(self):
+    def validar_opcao(self, max=5):
         try:
             self.opcao = int(self.opcao)
         except ValueError:
             print('Digite uma opção válida')
             return False
 
-        if self.opcao in [1, 2, 3, 4, 5]:
+        if self.opcao in range(1, max+1):
             return True
         else:
             print('Digite uma opção válida')
@@ -95,7 +95,7 @@ class MenuCliente(Menu):
     def __init__(self, cc=True, cp=False):
         while True:
             self.menu_principal()
-            if self.validar_opcao():
+            if self.validar_opcao(max=4):
                 break
             else:
                 continue
@@ -105,7 +105,6 @@ class MenuCliente(Menu):
         print('1 - Ver Saldo')
         print('2 - Depositar')
         print('3 - Sacar')
-        print('4 - Transferência')
-        print('5 - Sair do sistema')
+        print('4 - Sair do sistema')
         print('-'*50)
         self.opcao = input('Digite a opção desejada: ')
